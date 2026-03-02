@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion — The Lands Between</title>
+  <link rel="stylesheet" href="/assets/login.css">
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <p class="title">The Lands Between</p>
+    <div class="rune-divider"><span class="rune-symbol">✦</span></div>
+    <h1 class="subtitle">Revenir au Royaume</h1>
+    <p class="subtitle-small">Que la grâce guide vos pas</p>
+  </div>
+
+  <div class="card">
+
+    <?php if (!empty($errors)): ?>
+    <div class="errors">
+      <?php foreach ($errors as $e): ?>
+      <p>✗ <?= htmlspecialchars($e) ?></p>
+      <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+    <form method="POST" action="">
+      <div class="form-group">
+        <label for="email">Adresse des Runes</label>
+        <input type="email" id="email" name="email" placeholder="votre@email.com" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+      </div>
+      <div class="form-group">
+        <label for="password">Mot de Passe Sacré</label>
+        <input type="password" id="password" name="password" placeholder="Votre mot de passe...">
+      </div>
+      <button type="submit" class="btn">Entrer dans le Royaume</button>
+    </form>
+
+  </div>
+
+  <div class="footer-link">
+    Pas encore de compte ?<br><br>
+    <a href="/auth/register.php">→ S'inscrire</a>
+  </div>
+</div>
+
+</body>
+</html>

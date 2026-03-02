@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription — The Lands Between</title>
+    <link rel="stylesheet" href="../assets/register.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <p class="title">The Lands Between</p>
+        <div class="rune-divider"><span class="rune-symbol">✦</span></div>
+        <h1 class="subtitle">Forger son Destin</h1>
+        <p class="subtitle-small">Rejoignez le royaume des Sans-Grâce</p>
+    </div>
+
+    <div class="card">
+
+        <?php if ($success): ?>
+        <div class="success-msg">
+            <p>✦ Votre âme a été inscrite dans les annales ✦</p>
+            <p><a href="login.php">→ Se connecter</a></p>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($errors)): ?>
+        <div class="errors">
+            <?php foreach ($errors as $e): ?>
+            <p>✗ <?= htmlspecialchars($e) ?></p>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!$success): ?>
+        <form method="POST" action="">
+            <div class="form-group">
+                <label for="nom">Nom du Sans-Grâce</label>
+                <input type="text" id="nom" name="nom" placeholder="Votre nom..." value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>">
+            </div>
+            <div class="form-group">
+                <label for="email">Adresse des Runes</label>
+                <input type="email" id="email" name="email" placeholder="votre@email.com" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>">
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de Passe Sacré</label>
+                <input type="password" id="password" name="password" placeholder="8 caractères minimum...">
+            </div>
+            <div class="form-group">
+                <label for="confirm">Confirmer le Serment</label>
+                <input type="password" id="confirm" name="confirm" placeholder="Répétez votre mot de passe...">
+            </div>
+            <button type="submit" class="btn">Commencer le Voyage</button>
+        </form>
+        <?php endif; ?>
+
+    </div>
+
+    <div class="footer-link">
+        Déjà un Sans-Grâce ?<br><br>
+        <a href="/auth/login.php">→ Se connecter</a>
+    </div>
+</div>
+
+</body>
+</html>
