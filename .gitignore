@@ -2,14 +2,7 @@
 /node_modules/
 
 .env
-.env.local
-.env.*.local
 
-/storage/*.log
-/storage/cache/
-/storage/tmp/
-
-/public/uploads/
 
 /.idea/
 /.vscode/
@@ -18,4 +11,3 @@ Thumbs.db
 
 /phpunit.result.cache
 coverage/
-echo "config.php" >> .gitignore

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="<?= htmlspecialchars($user['theme'] ?? 'dark') ?>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil — The Lands Between</title>
+    <link rel="stylesheet" href="/assets/profil.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <p class="title">The Lands Between</p>
+        <div class="rune-divider"><span class="rune-symbol">✦</span></div>
+        <h1 class="subtitle">Fiche du Voyageur</h1>
+        <p class="subtitle-small">Membre depuis le <?= date('d/m/Y', strtotime($user['created_at'])) ?></p>
+    </div>
+
+    <!-- Bloc info utilisateur -->
+    <?php
+    $currentAvatar = $user['avatar'] ?? 'avatar1';
+    if (!isset($avatars[$currentAvatar])) $currentAvatar = 'avatar1';
+    ?>
+    <div class="profile-info">
+        <div class="profile-avatar">
+            <img src="<?= $avatars[$currentAvatar]['img'] ?>" alt="avatar">
+        </div>
+        <div class="profile-details">
+            <div class="info-badge"><?= strtoupper(htmlspecialchars($user['role'])) ?></div>
+            <div class="info-name"><?= htmlspecialchars($user['nom']) ?></div>
+            <div class="info-email"><?= htmlspecialchars($user['email']) ?></div>
+            <?php if (!empty($user['bio'])): ?>
+                <div class="info-bio"><?= htmlspecialchars($user['bio']) ?></div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="card">
+
+        <?php if ($success): ?>
+            <div class="success-msg"><p>✓ Profil mis à jour avec succès</p></div>
+        <?php endif; ?>
+
+        <?php if (!empty($errors)): ?>
+            <div class="errors">
+                <?php foreach ($errors as $e): ?>
+                    <p>✗ <?= htmlspecialchars($e) ?></p>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="/profil">
+
+            <!-- AVATAR -->
+            <p class="section-label">Choisir un avatar</p>
+            <div class="avatar-grid">
+                <?php foreach ($avatars as $key => $av): ?>
+                    <label class="avatar-option <?= $currentAvatar === $key ? 'selected' : '' ?>">
+                        <input type="radio" name="avatar" value="<?= $key ?>" <?= $currentAvatar === $key ? 'checked' : '' ?>>
+                        <img src="<?= $av['img'] ?>" alt="<?= $av['label'] ?>">
+                        <span class="avatar-label"><?= $av['label'] ?></span>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- INFOS -->
+            <p class="section-label">Informations</p>
+
+            <div class="form-group">
+                <label for="nom">Nom</label>
+                <input type="text" id="nom" name="nom" value="<?= htmlspecialchars($user['nom']) ?>">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>">
+            </div>
+            <div class="form-group">
+                <label for="bio">Biographie <span class="optional">(optionnel)</span></label>
+                <input type="text" id="bio" name="bio" placeholder="Quelques mots sur vous..." value="<?= htmlspecialchars($user['bio'] ?? '') ?>">
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- THEME -->
+            <p class="section-label">Apparence</p>
+            <div class="theme-toggle">
+                <label class="theme-option <?= ($user['theme'] ?? 'dark') === 'dark' ? 'selected' : '' ?>">
+                    <input type="radio" name="theme" value="dark" <?= ($user['theme'] ?? 'dark') === 'dark' ? 'checked' : '' ?>>
+                    <span>🌑 Mode sombre</span>
+                </label>
+                <label class="theme-option <?= ($user['theme'] ?? 'dark') === 'light' ? 'selected' : '' ?>">
+                    <input type="radio" name="theme" value="light" <?= ($user['theme'] ?? 'dark') === 'light' ? 'checked' : '' ?>>
+                    <span>☀️ Mode clair</span>
+                </label>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- MOT DE PASSE -->
+            <p class="section-label">Changer le mot de passe <span>(laisser vide pour ne pas modifier)</span></p>
+
+            <div class="form-group">
+                <label for="password">Nouveau mot de passe</label>
+                <input type="password" id="password" name="password" placeholder="Minimum 6 caractères...">
+            </div>
+            <div class="form-group">
+                <label for="confirm">Confirmer</label>
+                <input type="password" id="confirm" name="confirm" placeholder="Répétez le mot de passe...">
+            </div>
+
+            <button type="submit" class="btn">Sauvegarder</button>
+        </form>
+    </div>
+
+    <div class="footer-link">
+        <a href="/logout">→ Se déconnecter</a>
+    </div>
+
+</div>
+
+<script>
+    // Aperçu live du thème
+    document.querySelectorAll('input[name="theme"]').forEach(input => {
+        input.addEventListener('change', function() {
+            document.documentElement.setAttribute('data-theme', this.value);
+            document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('selected'));
+            this.closest('.theme-option').classList.add('selected');
+        });
+    });
+
+    // Highlight avatar sélectionné + mise à jour aperçu
+    document.querySelectorAll('input[name="avatar"]').forEach(input => {
+        input.addEventListener('change', function() {
+            document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
+            this.closest('.avatar-option').classList.add('selected');
+            document.querySelector('.profile-avatar img').src = this.closest('.avatar-option').querySelector('img').src;
+        });
+    });
+</script>
+
+</body>
+</html>

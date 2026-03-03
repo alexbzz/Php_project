@@ -8,7 +8,7 @@ $routes = [
     'login'   => '/auth/login.php',
     'register' => '/auth/register.php',
     'profil'  => '/auth/profil.php',
-    'logout'  => '/logout.php',
+    'logout'  => '/auth/logout.php',
 ];
 if (isset($routes[$uri])) {
     require __DIR__ . $routes[$uri];
