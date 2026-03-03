@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($user['role'] === 'admin') {
                     header('Location: /admin');
                 } else {
-                    header('Location: /index');
+                    header('Location: /profil');
                 }
                 exit;
             } else {
