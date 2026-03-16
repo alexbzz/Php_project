@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sanctum Admin — Gestion des Jeux</title>
+  <link rel="stylesheet" href="/assets/admin_page.css">
+  <link rel="stylesheet" href="/assets/admin_jeux.css">
+</head>
+<body>
+<div class="noise"></div>
+
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <span class="brand-rune">ᚱ</span>
+    <div>
+      <div class="brand-title">SANCTUM</div>
+      <div class="brand-sub">PANEL D'ADMINISTRATION</div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">COMMANDEMENT</div>
+    <a href="/admin" class="nav-item"><span class="nav-icon">⬡</span> Vue d'ensemble</a>
+    <a href="/admin/jeux" class="nav-item active"><span class="nav-icon">⬡</span> Gestion des Jeux</a>
+    <div class="nav-section-label" style="margin-top:28px">SESSION</div>
+    <a href="/profil" class="nav-item"><span class="nav-icon">⬡</span> Mon profil</a>
+    <a href="/logout" class="nav-item danger"><span class="nav-icon">⬡</span> Quitter le trône</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-badge">
+      <span class="badge-dot"></span>
+      <div>
+        <div class="badge-name"><?= htmlspecialchars($_SESSION['user_nom']) ?></div>
+        <div class="badge-role">ELDEN LORD</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+
+  <?php if ($flash): ?>
+  <div class="flash-msg"><?= htmlspecialchars($flash) ?></div>
+  <?php endif; ?>
+
+  <?php if ($action === 'list'): ?>
+  <!-- ═══ LISTE JEUX ═══ -->
+  <header class="page-header">
+    <div>
+      <div class="page-eyebrow">ADMINISTRATION</div>
+      <h1 class="page-title">Grimoire des Jeux</h1>
+    </div>
+    <a href="/admin/jeux?action=add" class="btn-header">+ INVOQUER UN JEU</a>
+  </header>
+
+  <div class="games-grid">
+    <?php foreach ($jeux as $j):
+            $nb_niv = $pdo->prepare("SELECT COUNT(*) FROM niveaux WHERE jeu_id=?"); $nb_niv->execute([$j['id']]);
+    $nb_suc = $pdo->prepare("SELECT COUNT(*) FROM succes WHERE jeu_id=?");  $nb_suc->execute([$j['id']]);
+    $nb_tut = $pdo->prepare("SELECT COUNT(*) FROM tutos WHERE jeu_id=?");   $nb_tut->execute([$j['id']]);
+    $nb_ast = $pdo->prepare("SELECT COUNT(*) FROM astuces WHERE jeu_id=?"); $nb_ast->execute([$j['id']]);
+    ?>
+    <div class="game-card">
+      <div class="game-card-header">
+        <div class="game-type-tag"><?= htmlspecialchars($j['type']) ?></div>
+        <div class="game-id">#<?= $j['id'] ?></div>
+      </div>
+      <div class="game-title"><?= htmlspecialchars($j['nom']) ?></div>
+      <div class="game-desc"><?= htmlspecialchars(mb_substr($j['description'], 0, 80)) ?>…</div>
+      <div class="game-meta">
+        <span class="meta-pill">⬡ <?= $nb_niv->fetchColumn() ?> niveaux</span>
+        <span class="meta-pill">♛ <?= $nb_suc->fetchColumn() ?> succès</span>
+        <span class="meta-pill">▶ <?= $nb_tut->fetchColumn() ?> tutos</span>
+        <span class="meta-pill">✦ <?= $nb_ast->fetchColumn() ?> astuces</span>
+      </div>
+      <div class="game-actions">
+        <a href="/admin/jeux?action=edit&id=<?= $j['id'] ?>" class="btn-sm btn-edit">✎ MODIFIER</a>
+        <a href="/admin/jeux?action=niveaux&id=<?= $j['id'] ?>" class="btn-sm btn-levels">⬡ NIVEAUX</a>
+        <a href="/admin/jeux?action=succes&id=<?= $j['id'] ?>" class="btn-sm btn-succes">♛ SUCCÈS</a>
+        <a href="/admin/jeux?action=tutos&id=<?= $j['id'] ?>" class="btn-sm btn-tutos">▶ TUTOS</a>
+        <a href="/admin/jeux?action=astuces&id=<?= $j['id'] ?>" class="btn-sm btn-astuces">✦ ASTUCES</a>
+        <form method="POST" style="display:inline">
+          <input type="hidden" name="delete_jeu" value="<?= $j['id'] ?>">
+          <button class="btn-sm btn-del" onclick="return confirm('Supprimer <?= htmlspecialchars($j['nom']) ?> ?')">✕ SUPPR.</button>
+        </form>
+      </div>
+    </div>
+    <?php endforeach; ?>
+  </div>
+
+  <?php elseif ($action === 'add' || $action === 'edit'): ?>
+  <!-- ═══ FORMULAIRE JEU ═══ -->
+  <header class="page-header">
+    <div>
+      <div class="page-eyebrow">ADMINISTRATION</div>
+      <h1 class="page-title"><?= $action === 'edit' ? 'Modifier le Jeu' : 'Invoquer un Jeu' ?></h1>
+    </div>
+    <a href="/admin/jeux" class="btn-header-ghost">← RETOUR</a>
+  </header>
+
+  <?php if (!empty($errors)): ?>
+  <div class="errors-block"><?php foreach ($errors as $e): ?><p><?= htmlspecialchars($e) ?></p><?php endforeach; ?></div>
+  <?php endif; ?>
+
+  <div class="form-card">
+    <form method="POST">
+      <input type="hidden" name="save_jeu" value="1">
+      <input type="hidden" name="edit_id" value="<?= $jeu['id'] ?? 0 ?>">
+      <div class="form-row">
+        <div class="form-group">
+          <label>NOM DU JEU</label>
+          <input type="text" name="nom" placeholder="ex: Dark Souls III" value="<?= htmlspecialchars($jeu['nom'] ?? '') ?>" required>
+        </div>
+        <div class="form-group">
+          <label>TYPE</label>
+          <input type="text" name="type" placeholder="ex: Action RPG" value="<?= htmlspecialchars($jeu['type'] ?? '') ?>" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>DESCRIPTION</label>
+        <textarea name="description" rows="4" placeholder="Description du jeu…"><?= htmlspecialchars($jeu['description'] ?? '') ?></textarea>
+      </div>
+      <div class="form-group">
+        <label>IMAGE (nom du fichier)</label>
+        <input type="text" name="image" placeholder="ex: ds3.jpg" value="<?= htmlspecialchars($jeu['image'] ?? '') ?>">
+      </div>
+      <button type="submit" class="btn-submit"><?= $action === 'edit' ? '✔ SAUVEGARDER' : '+ INVOQUER' ?></button>
+    </form>
+  </div>
+
+  <?php elseif ($action === 'niveaux' && $jeu): ?>
+  <!-- ═══ NIVEAUX ═══ -->
+  <header class="page-header">
+    <div><div class="page-eyebrow"><?= htmlspecialchars($jeu['nom']) ?></div><h1 class="page-title">Niveaux</h1></div>
+    <a href="/admin/jeux" class="btn-header-ghost">← RETOUR</a>
+  </header>
+  <div class="form-card" style="margin-bottom:24px">
+    <div class="form-card-title">AJOUTER UN NIVEAU</div>
+    <form method="POST">
+      <input type="hidden" name="save_niveau" value="1">
+      <input type="hidden" name="jeu_id" value="<?= $jeu['id'] ?>">
+      <input type="hidden" name="niv_id" value="0">
+      <div class="form-row">
+        <div class="form-group"><label>NOM</label><input type="text" name="nom" placeholder="Nom du niveau" required></div>
+        <div class="form-group">
+          <label>DIFFICULTÉ</label>
+          <select name="difficulte">
+            <option value="facile">Facile</option>
+            <option value="moyen">Moyen</option>
+            <option value="difficile">Difficile</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>DESCRIPTION</label><textarea name="description" rows="2"></textarea></div>
+      <button type="submit" class="btn-submit">+ AJOUTER</button>
+    </form>
+  </div>
+  <div class="sub-table-wrapper">
+    <table class="users-table">
+      <thead><tr><th>#</th><th>NOM</th><th>DIFFICULTÉ</th><th>DESCRIPTION</th><th>ACTION</th></tr></thead>
+      <tbody>
+      <?php foreach ($niveaux as $n): ?>
+      <tr>
+        <td class="td-id"><?= $n['id'] ?></td>
+        <td class="td-name"><?= htmlspecialchars($n['nom']) ?></td>
+        <td><span class="diff-badge diff-<?= $n['difficulte'] ?>"><?= strtoupper($n['difficulte']) ?></span></td>
+        <td class="td-muted"><?= htmlspecialchars(mb_substr($n['description'], 0, 70)) ?>…</td>
+        <td><form method="POST" style="display:inline">
+          <input type="hidden" name="delete_niveau" value="<?= $n['id'] ?>">
+          <input type="hidden" name="back_jeu_id" value="<?= $jeu['id'] ?>">
+          <button class="btn-action btn-delete" onclick="return confirm('Supprimer ?')">✕</button>
+        </form></td>
+      </tr>
+      <?php endforeach; ?>
+      <?php if (empty($niveaux)): ?><tr><td colspan="5" class="td-muted" style="text-align:center;padding:24px;letter-spacing:3px">AUCUN NIVEAU</td></tr><?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+
+  <?php elseif ($action === 'succes' && $jeu): ?>
+  <!-- ═══ SUCCÈS ═══ -->
+  <header class="page-header">
+    <div><div class="page-eyebrow"><?= htmlspecialchars($jeu['nom']) ?></div><h1 class="page-title">Succès</h1></div>
+    <a href="/admin/jeux" class="btn-header-ghost">← RETOUR</a>
+  </header>
+  <div class="form-card" style="margin-bottom:24px">
+    <div class="form-card-title">AJOUTER UN SUCCÈS</div>
+    <form method="POST">
+      <input type="hidden" name="save_succes" value="1">
+      <input type="hidden" name="jeu_id" value="<?= $jeu['id'] ?>">
+      <input type="hidden" name="suc_id" value="0">
+      <div class="form-group"><label>NOM</label><input type="text" name="nom" placeholder="Nom du succès" required></div>
+      <div class="form-group"><label>DESCRIPTION</label><textarea name="description" rows="2" placeholder="Condition d'obtention…"></textarea></div>
+      <button type="submit" class="btn-submit">+ AJOUTER</button>
+    </form>
+  </div>
+  <div class="sub-table-wrapper">
+    <table class="users-table">
+      <thead><tr><th>#</th><th>NOM</th><th>DESCRIPTION</th><th>ACTION</th></tr></thead>
+      <tbody>
+      <?php foreach ($succes as $s): ?>
+      <tr>
+        <td class="td-id"><?= $s['id'] ?></td>
+        <td class="td-name"><span class="crown">♛</span><?= htmlspecialchars($s['nom']) ?></td>
+        <td class="td-muted"><?= htmlspecialchars(mb_substr($s['description'], 0, 80)) ?>…</td>
+        <td><form method="POST" style="display:inline">
+          <input type="hidden" name="delete_succes" value="<?= $s['id'] ?>">
+          <input type="hidden" name="back_jeu_id" value="<?= $jeu['id'] ?>">
+          <button class="btn-action btn-delete" onclick="return confirm('Supprimer ?')">✕</button>
+        </form></td>
+      </tr>
+      <?php endforeach; ?>
+      <?php if (empty($succes)): ?><tr><td colspan="4" class="td-muted" style="text-align:center;padding:24px;letter-spacing:3px">AUCUN SUCCÈS</td></tr><?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+
+  <?php elseif ($action === 'tutos' && $jeu): ?>
+  <!-- ═══ TUTOS YOUTUBE ═══ -->
+  <header class="page-header">
+    <div><div class="page-eyebrow"><?= htmlspecialchars($jeu['nom']) ?></div><h1 class="page-title">Tutoriels YouTube</h1></div>
+    <a href="/admin/jeux" class="btn-header-ghost">← RETOUR</a>
+  </header>
+  <div class="form-card" style="margin-bottom:24px">
+    <div class="form-card-title">AJOUTER UN TUTORIEL</div>
+    <form method="POST">
+      <input type="hidden" name="save_tuto" value="1">
+      <input type="hidden" name="jeu_id" value="<?= $jeu['id'] ?>">
+      <div class="form-group"><label>TITRE</label><input type="text" name="titre" placeholder="ex: Guide complet des boss" required></div>
+      <div class="form-group"><label>URL YOUTUBE</label><input type="url" name="url" placeholder="https://www.youtube.com/watch?v=..." required></div>
+      <button type="submit" class="btn-submit">+ AJOUTER</button>
+    </form>
+  </div>
+  <div class="sub-table-wrapper">
+    <table class="users-table">
+      <thead><tr><th>#</th><th>TITRE</th><th>URL</th><th>ACTION</th></tr></thead>
+      <tbody>
+      <?php foreach ($tutos as $t): ?>
+      <tr>
+        <td class="td-id"><?= $t['id'] ?></td>
+        <td class="td-name">▶ <?= htmlspecialchars($t['titre']) ?></td>
+        <td class="td-muted"><a href="<?= htmlspecialchars($t['url']) ?>" target="_blank" style="color:var(--accent);text-decoration:none"><?= htmlspecialchars(mb_substr($t['url'], 0, 50)) ?>…</a></td>
+        <td><form method="POST" style="display:inline">
+          <input type="hidden" name="delete_tuto" value="<?= $t['id'] ?>">
+          <input type="hidden" name="back_jeu_id" value="<?= $jeu['id'] ?>">
+          <button class="btn-action btn-delete" onclick="return confirm('Supprimer ?')">✕</button>
+        </form></td>
+      </tr>
+      <?php endforeach; ?>
+      <?php if (empty($tutos)): ?><tr><td colspan="4" class="td-muted" style="text-align:center;padding:24px;letter-spacing:3px">AUCUN TUTORIEL</td></tr><?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+
+  <?php elseif ($action === 'astuces' && $jeu): ?>
+  <!-- ═══ ASTUCES ═══ -->
+  <header class="page-header">
+    <div><div class="page-eyebrow"><?= htmlspecialchars($jeu['nom']) ?></div><h1 class="page-title">Astuces</h1></div>
+    <a href="/admin/jeux" class="btn-header-ghost">← RETOUR</a>
+  </header>
+  <div class="form-card" style="margin-bottom:24px">
+    <div class="form-card-title">AJOUTER UNE ASTUCE</div>
+    <form method="POST">
+      <input type="hidden" name="save_astuce" value="1">
+      <input type="hidden" name="jeu_id" value="<?= $jeu['id'] ?>">
+      <div class="form-group"><label>CONTENU</label><textarea name="contenu" rows="3" placeholder="Décris l'astuce en détail…" required></textarea></div>
+      <button type="submit" class="btn-submit">+ AJOUTER</button>
+    </form>
+  </div>
+  <div class="sub-table-wrapper">
+    <table class="users-table">
+      <thead><tr><th>#</th><th>ASTUCE</th><th>ACTION</th></tr></thead>
+      <tbody>
+      <?php foreach ($astuces as $i => $a): ?>
+      <tr>
+        <td class="td-id"><?= str_pad($i+1, 2, '0', STR_PAD_LEFT) ?></td>
+        <td class="td-muted" style="max-width:500px"><?= htmlspecialchars(mb_substr($a['contenu'], 0, 120)) ?>…</td>
+        <td><form method="POST" style="display:inline">
+          <input type="hidden" name="delete_astuce" value="<?= $a['id'] ?>">
+          <input type="hidden" name="back_jeu_id" value="<?= $jeu['id'] ?>">
+          <button class="btn-action btn-delete" onclick="return confirm('Supprimer ?')">✕</button>
+        </form></td>
+      </tr>
+      <?php endforeach; ?>
+      <?php if (empty($astuces)): ?><tr><td colspan="3" class="td-muted" style="text-align:center;padding:24px;letter-spacing:3px">AUCUNE ASTUCE</td></tr><?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+
+  <?php endif; ?>
+
+</main>
+</body>
+</html>

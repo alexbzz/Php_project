@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ma Bibliothèque — The Lands Between</title>
+  <link rel="stylesheet" href="/assets/bibliotheque.css">
+</head>
+<body>
+<div class="noise"></div>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <span class="nav-rune">ᚱ</span>
+    <span class="nav-name">THE LANDS BETWEEN</span>
+  </div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">ACCUEIL</a>
+    <a href="/profil" class="nav-link">MON PROFIL</a>
+    <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+    <a href="/admin" class="nav-link gold">ELDEN LORD</a>
+    <?php endif; ?>
+    <a href="/logout" class="nav-link muted">QUITTER</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <header class="page-header">
+    <div>
+      <div class="page-eyebrow">MON SANCTUAIRE</div>
+      <h1 class="page-title">Bibliothèque des Royaumes</h1>
+    </div>
+    <div class="header-stats">
+      <div class="hstat">
+        <div class="hstat-val"><?= $total_jeux ?></div>
+        <div class="hstat-lbl">JEUX</div>
+      </div>
+      <div class="hstat-sep"></div>
+      <div class="hstat">
+        <div class="hstat-val"><?= $total_succes ?></div>
+        <div class="hstat-lbl">SUCCÈS</div>
+      </div>
+      <div class="hstat-sep"></div>
+      <div class="hstat">
+        <div class="hstat-val"><?= $total_temps ?>h</div>
+        <div class="hstat-lbl">TEMPS</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- AJOUTER UN JEU -->
+  <?php if (!empty($jeux_disponibles)): ?>
+  <div class="bib-add-bar">
+    <form method="POST" class="bib-add-form">
+      <input type="hidden" name="add_jeu" value="1">
+      <select name="jeu_id" required>
+        <option value="" disabled selected>— Choisir un royaume —</option>
+        <?php foreach ($jeux_disponibles as $j): ?>
+        <option value="<?= $j['id'] ?>"><?= htmlspecialchars($j['nom']) ?> · <?= htmlspecialchars($j['type']) ?></option>
+        <?php endforeach; ?>
+      </select>
+      <div class="bib-temps-wrap">
+        <input type="number" name="temps_jeu" min="0" max="9999" placeholder="0" value="0">
+        <span class="bib-unit">H</span>
+      </div>
+      <button type="submit" class="bib-btn-add">+ INVOQUER</button>
+    </form>
+  </div>
+  <?php endif; ?>
+
+  <!-- LISTE JEUX -->
+  <?php if (empty($ma_bibliotheque)): ?>
+  <div class="empty-state">
+    <div class="empty-rune">ᚷ</div>
+    <p>Ton sanctuaire est vide — invoque ton premier royaume.</p>
+  </div>
+  <?php else: ?>
+  <div class="bib-list">
+    <?php foreach ($ma_bibliotheque as $bib):
+            $jeu_succes   = $succes_par_jeu[$bib['jeu_id']] ?? [];
+            $nb_total     = count($jeu_succes);
+            $nb_debloques = count(array_filter($jeu_succes, fn($s) => in_array($s['id'], $succes_debloques)));
+    $pct          = $nb_total > 0 ? round($nb_debloques / $nb_total * 100) : 0;
+    ?>
+    <div class="bib-panel">
+
+      <!-- HEADER JEU -->
+      <div class="bib-panel-head">
+        <div class="bib-panel-left">
+          <?php if (!empty($bib['image'])): ?>
+          <div class="bib-panel-img">
+            <img src="/assets/<?= htmlspecialchars($bib['image']) ?>" alt="<?= htmlspecialchars($bib['nom']) ?>">
+          </div>
+          <?php endif; ?>
+          <div class="bib-panel-info">
+            <div class="bib-type"><?= htmlspecialchars($bib['type']) ?></div>
+            <div class="bib-title"><?= htmlspecialchars($bib['nom']) ?></div>
+            <div class="bib-meta">
+              Ajouté le <?= date('d/m/Y', strtotime($bib['date_ajout'])) ?>
+              &nbsp;·&nbsp;
+              <span class="bib-scount"><?= $nb_debloques ?>/<?= $nb_total ?> succès</span>
+              &nbsp;·&nbsp;
+              <?= $bib['temps_jeu'] ?>h jouées
+            </div>
+          </div>
+        </div>
+        <div class="bib-panel-right">
+
+          <!-- NOTE ÉTOILES -->
+          <form method="POST" class="note-form">
+            <input type="hidden" name="update_note" value="1">
+            <input type="hidden" name="user_jeu_id" value="<?= $bib['uj_id'] ?>">
+            <div class="note-stars">
+              <?php for ($i = 1; $i <= 5; $i++): ?>
+              <button type="submit" name="note" value="<?= $i ?>"
+                      class="star <?= ($bib['note'] ?? 0) >= $i ? 'star--on' : '' ?>">★</button>
+              <?php endfor; ?>
+            </div>
+          </form>
+
+          <!-- VOIR DÉTAIL -->
+          <a href="/bibliotheque?id=<?= $bib['jeu_id'] ?>" class="bib-btn-detail">→ VOIR DÉTAIL</a>
+
+          <!-- TEMPS DE JEU -->
+          <form method="POST" style="display:flex;align-items:center">
+            <input type="hidden" name="update_temps" value="1">
+            <input type="hidden" name="user_jeu_id" value="<?= $bib['uj_id'] ?>">
+            <div class="bib-temps-edit">
+              <input type="number" name="temps_jeu" value="<?= $bib['temps_jeu'] ?>" min="0" max="9999">
+              <span class="bib-unit">H</span>
+              <button type="submit" class="bib-btn-save">✔</button>
+            </div>
+          </form>
+
+          <!-- RETIRER -->
+          <form method="POST" style="display:inline">
+            <input type="hidden" name="remove_jeu" value="1">
+            <input type="hidden" name="user_jeu_id" value="<?= $bib['uj_id'] ?>">
+            <button class="bib-btn-remove" onclick="return confirm('Retirer <?= htmlspecialchars($bib['nom']) ?> ?')">✕ RETIRER</button>
+          </form>
+
+        </div>
+      </div>
+
+      <!-- BARRE PROGRESSION -->
+      <div class="bib-progress">
+        <div class="bib-bar"><div class="bib-bar-fill" style="width:<?= $pct ?>%"></div></div>
+        <span class="bib-pct"><?= $pct ?>%</span>
+      </div>
+
+      <!-- GRILLE SUCCÈS -->
+      <?php if (!empty($jeu_succes)): ?>
+      <div class="bib-succes-grid">
+        <?php foreach ($jeu_succes as $s):
+                    $unlocked = in_array($s['id'], $succes_debloques);
+                ?>
+        <div class="bib-scard <?= $unlocked ? 'bib-scard--on' : '' ?>">
+          <div class="bib-sicon"><?= $unlocked ? '♛' : '◈' ?></div>
+          <div class="bib-sbody">
+            <div class="bib-sname"><?= htmlspecialchars($s['nom']) ?></div>
+            <div class="bib-sdesc"><?= htmlspecialchars($s['description']) ?></div>
+          </div>
+          <form method="POST">
+            <input type="hidden" name="<?= $unlocked ? 'lock_succes' : 'unlock_succes' ?>" value="1">
+            <input type="hidden" name="succes_id" value="<?= $s['id'] ?>">
+            <button class="bib-stoggle <?= $unlocked ? 'bib-stoggle--on' : '' ?>">
+              <?= $unlocked ? '✕' : '✔' ?>
+            </button>
+          </form>
+        </div>
+        <?php endforeach; ?>
+      </div>
+      <?php endif; ?>
+
+    </div>
+    <?php endforeach; ?>
+  </div>
+  <?php endif; ?>
+
+</div>
+</body>
+</html>

@@ -805,3 +805,16 @@ input::placeholder {
     color: var(--text-muted);
     background: transparent;
 }
+.bib-btn-detail {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px; font-weight: 600; letter-spacing: 2px;
+    padding: 7px 14px; background: transparent;
+    color: var(--gold); border: 1px solid rgba(201,168,76,0.35);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.bib-btn-detail:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+}

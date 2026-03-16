@@ -3,13 +3,16 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = trim($uri, '/');
 
 $routes = [
-    ''         => '/index.php',
-    'index'    => '/index.php',
+    ''         => '/auth/index.php',
+    'index'    => '/auth/index.php',
     'login'    => '/auth/login.php',
     'register' => '/auth/register.php',
     'profil'   => '/auth/profil.php',
     'logout'   => '/auth/logout.php',
     'admin'    => '/admin/admin.php',
+    'bibliotheque' => '/auth/bibliotheque.php',
+    'admin/jeux' => '/admin/jeux.php',
+
 ];
 
 if (isset($routes[$uri])) {

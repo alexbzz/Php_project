@@ -17,16 +17,23 @@
         <p class="subtitle-small">Membre depuis le <?= date('d/m/Y', strtotime($user['created_at'])) ?></p>
     </div>
 
-    <?php if ($flash && !str_starts_with($flash, 'error:')): ?>
-        <div class="flash-bar flash-ok"><?= htmlspecialchars($flash) ?></div>
-    <?php elseif (str_starts_with($flash ?? '', 'error:')): ?>
-        <div class="flash-bar flash-err"><?= htmlspecialchars(substr($flash, 6)) ?></div>
+    <?php if ($success): ?>
+    <div class="success-msg"><p>✓ Profil mis à jour avec succès</p></div>
+    <?php endif; ?>
+
+    <?php if (!empty($errors)): ?>
+    <div class="errors">
+        <?php foreach ($errors as $e): ?>
+        <p>✗ <?= htmlspecialchars($e) ?></p>
+        <?php endforeach; ?>
+    </div>
     <?php endif; ?>
 
     <?php
     $currentAvatar = $user['avatar'] ?? 'avatar1';
     if (!isset($avatars[$currentAvatar])) $currentAvatar = 'avatar1';
     ?>
+
     <div class="profile-info">
         <div class="profile-avatar">
             <img src="<?= $avatars[$currentAvatar]['img'] ?>" alt="avatar">
@@ -36,38 +43,19 @@
             <div class="info-name"><?= htmlspecialchars($user['nom']) ?></div>
             <div class="info-email"><?= htmlspecialchars($user['email']) ?></div>
             <?php if (!empty($user['bio'])): ?>
-                <div class="info-bio"><?= htmlspecialchars($user['bio']) ?></div>
+            <div class="info-bio"><?= htmlspecialchars($user['bio']) ?></div>
             <?php endif; ?>
         </div>
-        <div class="profile-stats">
-            <div class="pstat">
-                <div class="pstat-val"><?= $total_jeux ?></div>
-                <div class="pstat-label">JEUX</div>
-            </div>
-            <div class="pstat-sep"></div>
-            <div class="pstat">
-                <div class="pstat-val"><?= $total_succes ?></div>
-                <div class="pstat-label">SUCCÈS</div>
-            </div>
-            <div class="pstat-sep"></div>
-            <div class="pstat">
-                <div class="pstat-val"><?= $total_temps ?>h</div>
-                <div class="pstat-label">TEMPS</div>
-            </div>
-        </div>
+    </div>
+    <div class="footer-link">
+        <a href="/">← ACCUEIL</a>
+        &nbsp;&nbsp;·&nbsp;&nbsp;
+        <a href="/bibliotheque">→ Ma bibliothèque</a>
+        &nbsp;&nbsp;·&nbsp;&nbsp;
+        <a href="/logout">→ Se déconnecter</a>
     </div>
 
     <div class="card">
-        <?php if ($success): ?>
-            <div class="success-msg"><p>✓ Profil mis à jour avec succès</p></div>
-        <?php endif; ?>
-        <?php if (!empty($errors)): ?>
-            <div class="errors">
-                <?php foreach ($errors as $e): ?>
-                    <p>✗ <?= htmlspecialchars($e) ?></p>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
 
         <form method="POST" action="/profil">
             <input type="hidden" name="save_profil" value="1">
@@ -75,11 +63,11 @@
             <p class="section-label">Choisir un avatar</p>
             <div class="avatar-grid">
                 <?php foreach ($avatars as $key => $av): ?>
-                    <label class="avatar-option <?= $currentAvatar === $key ? 'selected' : '' ?>">
-                        <input type="radio" name="avatar" value="<?= $key ?>" <?= $currentAvatar === $key ? 'checked' : '' ?>>
-                        <img src="<?= $av['img'] ?>" alt="<?= $av['label'] ?>">
-                        <span class="avatar-label"><?= $av['label'] ?></span>
-                    </label>
+                <label class="avatar-option <?= $currentAvatar === $key ? 'selected' : '' ?>">
+                    <input type="radio" name="avatar" value="<?= $key ?>" <?= $currentAvatar === $key ? 'checked' : '' ?>>
+                    <img src="<?= $av['img'] ?>" alt="<?= $av['label'] ?>">
+                    <span class="avatar-label"><?= $av['label'] ?></span>
+                </label>
                 <?php endforeach; ?>
             </div>
 
@@ -127,116 +115,6 @@
 
             <button type="submit" class="btn">Sauvegarder</button>
         </form>
-    </div>
-
-
-    <div id="bibliotheque" style="margin-top: 40px;">
-
-        <div class="rune-divider" style="margin-bottom: 24px;">
-            <span class="rune-symbol">⬡</span>
-            <span style="font-family:'Barlow Condensed',sans-serif;font-size:10px;letter-spacing:5px;color:var(--text-muted);">BIBLIOTHÈQUE DES ROYAUMES</span>
-            <span class="rune-symbol">⬡</span>
-        </div>
-
-        <?php if (!empty($jeux_disponibles)): ?>
-            <div class="bib-add-bar">
-                <form method="POST" class="bib-add-form">
-                    <input type="hidden" name="add_jeu" value="1">
-                    <select name="jeu_id" required>
-                        <option value="" disabled selected>— Choisir un royaume —</option>
-                        <?php foreach ($jeux_disponibles as $j): ?>
-                            <option value="<?= $j['id'] ?>"><?= htmlspecialchars($j['nom']) ?> · <?= htmlspecialchars($j['type']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                    <div class="bib-temps-wrap">
-                        <input type="number" name="temps_jeu" min="0" max="9999" placeholder="0" value="0">
-                        <span class="bib-unit">H</span>
-                    </div>
-                    <button type="submit" class="bib-btn-add">+ INVOQUER</button>
-                </form>
-            </div>
-        <?php endif; ?>
-
-        <?php if (empty($ma_bibliotheque)): ?>
-            <div class="bib-empty">
-                <div class="bib-empty-rune">ᚷ</div>
-                <p>Ton sanctuaire est vide — invoque ton premier royaume.</p>
-            </div>
-        <?php else: ?>
-            <div class="bib-list">
-                <?php foreach ($ma_bibliotheque as $bib):
-                    $jeu_succes   = $succes_par_jeu[$bib['jeu_id']] ?? [];
-                    $nb_total     = count($jeu_succes);
-                    $nb_debloques = count(array_filter($jeu_succes, fn($s) => in_array($s['id'], $succes_debloques)));
-                    $pct          = $nb_total > 0 ? round($nb_debloques / $nb_total * 100) : 0;
-                    ?>
-                    <div class="bib-panel">
-
-                        <div class="bib-panel-head">
-                            <div class="bib-panel-left">
-                                <div class="bib-type"><?= htmlspecialchars($bib['type']) ?></div>
-                                <div class="bib-title"><?= htmlspecialchars($bib['nom']) ?></div>
-                                <div class="bib-meta">
-                                    Ajouté le <?= date('d/m/Y', strtotime($bib['date_ajout'])) ?>
-                                    &nbsp;·&nbsp;
-                                    <span class="bib-scount"><?= $nb_debloques ?>/<?= $nb_total ?> succès</span>
-                                </div>
-                            </div>
-                            <div class="bib-panel-right">
-                                <form method="POST" style="display:flex;align-items:center">
-                                    <input type="hidden" name="update_temps" value="1">
-                                    <input type="hidden" name="user_jeu_id" value="<?= $bib['uj_id'] ?>">
-                                    <div class="bib-temps-edit">
-                                        <input type="number" name="temps_jeu" value="<?= $bib['temps_jeu'] ?>" min="0" max="9999">
-                                        <span class="bib-unit">H</span>
-                                        <button type="submit" class="bib-btn-save">✔</button>
-                                    </div>
-                                </form>
-                                <form method="POST" style="display:inline">
-                                    <input type="hidden" name="remove_jeu" value="1">
-                                    <input type="hidden" name="user_jeu_id" value="<?= $bib['uj_id'] ?>">
-                                    <button class="bib-btn-remove" onclick="return confirm('Retirer <?= htmlspecialchars($bib['nom']) ?> ?')">✕ RETIRER</button>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div class="bib-progress">
-                            <div class="bib-bar"><div class="bib-bar-fill" style="width:<?= $pct ?>%"></div></div>
-                            <span class="bib-pct"><?= $pct ?>%</span>
-                        </div>
-
-                        <?php if (!empty($jeu_succes)): ?>
-                            <div class="bib-succes-grid">
-                                <?php foreach ($jeu_succes as $s):
-                                    $unlocked = in_array($s['id'], $succes_debloques);
-                                    ?>
-                                    <div class="bib-scard <?= $unlocked ? 'bib-scard--on' : '' ?>">
-                                        <div class="bib-sicon"><?= $unlocked ? '♛' : '◈' ?></div>
-                                        <div class="bib-sbody">
-                                            <div class="bib-sname"><?= htmlspecialchars($s['nom']) ?></div>
-                                            <div class="bib-sdesc"><?= htmlspecialchars($s['description']) ?></div>
-                                        </div>
-                                        <form method="POST">
-                                            <input type="hidden" name="<?= $unlocked ? 'lock_succes' : 'unlock_succes' ?>" value="1">
-                                            <input type="hidden" name="succes_id" value="<?= $s['id'] ?>">
-                                            <button class="bib-stoggle <?= $unlocked ? 'bib-stoggle--on' : '' ?>">
-                                                <?= $unlocked ? '✕' : '✔' ?>
-                                            </button>
-                                        </form>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
-
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-
-    </div>
-
-    <div class="footer-link" style="margin-top:40px">
-        <a href="/logout">→ Se déconnecter</a>
     </div>
 
 </div>
