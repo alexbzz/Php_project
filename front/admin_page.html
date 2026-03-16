@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanctum Admin — Tableau de Commandement</title>
+    <link rel="stylesheet" href="/assets/admin_page.css">
+</head>
+<body>
+
+<div class="noise"></div>
+
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <span class="brand-rune">ᚱ</span>
+        <div>
+            <div class="brand-title">SANCTUM</div>
+            <div class="brand-sub">PANEL D'ADMINISTRATION</div>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">COMMANDEMENT</div>
+        <a href="/admin" class="nav-item active">
+            <span class="nav-icon">⬡</span> Vue d'ensemble
+        </a>
+        <a href="#users" class="nav-item">
+            <span class="nav-icon">⬡</span> Tarnished
+        </a>
+
+        <div class="nav-section-label" style="margin-top: 28px;">SESSION</div>
+        <a href="/profil" class="nav-item">
+            <span class="nav-icon">⬡</span> Mon profil
+        </a>
+        <a href="/logout" class="nav-item danger">
+            <span class="nav-icon">⬡</span> Quitter le trône
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="admin-badge">
+            <span class="badge-dot"></span>
+            <div>
+                <div class="badge-name"><?= htmlspecialchars($_SESSION['user_nom']) ?></div>
+                <div class="badge-role">ELDEN LORD</div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<main class="main">
+
+    <header class="page-header">
+        <div>
+            <div class="page-eyebrow">TABLEAU DE COMMANDEMENT</div>
+            <h1 class="page-title">Ordre du Royaume</h1>
+        </div>
+        <div class="header-rune">ᚨ</div>
+    </header>
+
+    <section class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">⬡</div>
+            <div class="stat-value"><?= $total ?></div>
+            <div class="stat-label">TARNISHED ENREGISTRÉS</div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon accent">ᚱ</div>
+            <div class="stat-value accent"><?= $admins ?></div>
+            <div class="stat-label">SEIGNEURS (ADMINS)</div>
+            <div class="stat-bar"><div class="stat-bar-fill accent" style="width:<?= $total ? ($admins/$total*100) : 0 ?>%"></div></div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">◈</div>
+            <div class="stat-value"><?= $members ?></div>
+            <div class="stat-label">VOYAGEURS (USERS)</div>
+            <div class="stat-bar"><div class="stat-bar-fill" style="width:<?= $total ? ($members/$total*100) : 0 ?>%"></div></div>
+        </div>
+    </section>
+
+    <div class="section-divider">
+        <span class="divider-rune">ᚦ</span>
+        <span class="divider-label">REGISTRE DES TARNISHED</span>
+        <span class="divider-rune">ᚦ</span>
+    </div>
+
+    <section class="table-section" id="users">
+        <div class="table-wrapper">
+            <table class="users-table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>NOM</th>
+                    <th>EMAIL</th>
+                    <th>RANG</th>
+                    <th>AVATAR</th>
+                    <th>INSCRIPTION</th>
+                    <th>ACTIONS</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($users as $u): ?>
+                <tr class="<?= $u['role'] === 'admin' ? 'row-admin' : '' ?>">
+                    <td class="td-id"><?= $u['id'] ?></td>
+                    <td class="td-name">
+                        <?php if ($u['role'] === 'admin'): ?>
+                        <span class="crown">♛</span>
+                        <?php endif; ?>
+                        <?= htmlspecialchars($u['nom']) ?>
+                    </td>
+                    <td class="td-email"><?= htmlspecialchars($u['email']) ?></td>
+                    <td>
+                            <span class="role-badge role-<?= $u['role'] ?>">
+                                <?= strtoupper($u['role']) ?>
+                            </span>
+                    </td>
+                    <td class="td-muted"><?= htmlspecialchars($u['avatar']) ?></td>
+                    <td class="td-muted"><?= date('d/m/Y', strtotime($u['created_at'])) ?></td>
+                    <td class="td-actions">
+                        <?php if ($u['role'] !== 'admin'): ?>
+                        <form method="POST" style="display:inline">
+                            <input type="hidden" name="change_role" value="<?= $u['id'] ?>">
+                            <input type="hidden" name="new_role" value="admin">
+                            <button type="submit" class="btn-action btn-promote"
+                                    onclick="return confirm('Promouvoir <?= htmlspecialchars($u['nom']) ?> en admin ?')">
+                                ↑ LORDSHIP
+                            </button>
+                        </form>
+                        <form method="POST" style="display:inline">
+                            <input type="hidden" name="delete_user" value="<?= $u['id'] ?>">
+                            <button type="submit" class="btn-action btn-delete"
+                                    onclick="return confirm('Bannir définitivement <?= htmlspecialchars($u['nom']) ?> ?')">
+                                ✕ BANNIR
+                            </button>
+                        </form>
+                        <?php else: ?>
+                        <?php if ($u['id'] !== (int)$_SESSION['user_id']): ?>
+                        <form method="POST" style="display:inline">
+                            <input type="hidden" name="change_role" value="<?= $u['id'] ?>">
+                            <input type="hidden" name="new_role" value="user">
+                            <button type="submit" class="btn-action btn-demote"
+                                    onclick="return confirm('Rétrograder <?= htmlspecialchars($u['nom']) ?> en user ?')">
+                                ↓ RÉTROGRADER
+                            </button>
+                        </form>
+                        <?php else: ?>
+                        <span class="td-muted" style="font-size:11px;letter-spacing:2px;">VOUS</span>
+                        <?php endif; ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>
