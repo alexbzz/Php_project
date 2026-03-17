@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../config.php';
+session_start();
 
 $errors = [];
 $success = false;
@@ -25,7 +26,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $hash = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $pdo->prepare("INSERT INTO utilisateurs (nom, email, password, role) VALUES (?, ?, ?, 'user')");
                 $stmt->execute([$nom, $email, $hash]);
-                $success = true;
+
+                // Récupérer l'ID de l'utilisateur nouvellement créé
+                $stmt = $pdo->prepare("SELECT id, nom, role FROM utilisateurs WHERE email = ?");
+                $stmt->execute([$email]);
+                $user = $stmt->fetch();
+
+                // Créer la session
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['user_name'] = $user['nom'];
+                $_SESSION['user_role'] = $user['role'];
+
+                // Rediriger vers le profil
+                header('Location: /profil');
+                exit;
             }
         } catch (\PDOException $e) {
             $errors[] = "Erreur serveur, veuillez réessayer.";

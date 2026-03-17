@@ -18,12 +18,6 @@
 
     <div class="card">
 
-        <?php if ($success): ?>
-        <div class="success-msg">
-            <p>✦ Votre âme a été inscrite dans les annales ✦</p>
-            <p><a href="login.php">→ Se connecter</a></p>
-        </div>
-        <?php endif; ?>
 
         <?php if (!empty($errors)): ?>
         <div class="errors">
@@ -33,8 +27,7 @@
         </div>
         <?php endif; ?>
 
-        <?php if (!$success): ?>
-        <form method="POST" action="">
+        <form method="POST" action="/register">
             <div class="form-group">
                 <label for="nom">Nom du Sans-Grâce</label>
                 <input type="text" id="nom" name="nom" placeholder="Votre nom..." value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>">
@@ -53,7 +46,6 @@
             </div>
             <button type="submit" class="btn">Commencer le Voyage</button>
         </form>
-        <?php endif; ?>
 
     </div>
 

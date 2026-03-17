@@ -27,7 +27,8 @@ $nb_succes = $pdo->query("SELECT COUNT(*) FROM succes")->fetchColumn();
     </div>
     <div class="nav-links">
         <?php if (isset($_SESSION['user_id'])): ?>
-            <a href="/profil" class="nav-link">MON SANCTUAIRE</a>
+            <a href="/bibliotheque" class="nav-link">MA BIBLIOTHÈQUE</a>
+            <a href="/profil" class="nav-link">MON PROFIL</a>
             <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
                 <a href="/admin" class="nav-link gold">ELDEN LORD</a>
             <?php endif; ?>
@@ -57,7 +58,8 @@ $nb_succes = $pdo->query("SELECT COUNT(*) FROM succes")->fetchColumn();
         <p class="hero-sub">Forgez votre légende. Tracez votre chemin à travers les royaumes.<br>Que la grâce guide vos pas, Tarnished.</p>
         <div class="hero-cta">
             <?php if (isset($_SESSION['user_id'])): ?>
-                <a href="/profil" class="cta-primary">ACCÉDER AU SANCTUAIRE</a>
+                <a href="/bibliotheque" class="cta-primary">MA BIBLIOTHÈQUE</a>
+                <a href="/profil" class="cta-ghost">MON PROFIL</a>
             <?php else: ?>
                 <a href="/register" class="cta-primary">COMMENCER LE VOYAGE</a>
                 <a href="/login" class="cta-ghost">SE CONNECTER</a>
@@ -129,7 +131,7 @@ $nb_succes = $pdo->query("SELECT COUNT(*) FROM succes")->fetchColumn();
 
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <?php if ($deja): ?>
-                            <div class="game-pill-added">✔ DANS TA BIBLIOTHÈQUE</div>
+                            <a href="/bibliotheque?id=<?= $j['id'] ?>" class="game-pill-added">✔ VOIR DANS MA BIBLIOTHÈQUE</a>
                         <?php else: ?>
                             <form method="POST" action="/bibliotheque">
                                 <input type="hidden" name="add_jeu" value="1">

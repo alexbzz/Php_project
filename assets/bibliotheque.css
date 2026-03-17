@@ -601,3 +601,259 @@ body {
 .bib-stoggle:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 .bib-stoggle--on { border-color: rgba(192,57,43,0.4); color: var(--accent); background: var(--accent-dim); }
 .bib-stoggle--on:hover { border-color: var(--border-hover); color: var(--text-muted); background: transparent; }
+
+/* ══════════════════════════════════════════
+   VUE DÉTAIL
+══════════════════════════════════════════ */
+
+.btn-back {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 3px;
+    color: var(--text-muted); text-decoration: none;
+    border: 1px solid var(--border); padding: 8px 16px;
+    transition: all 0.2s; display: inline-block;
+}
+
+.btn-back:hover { color: var(--text); border-color: var(--border-hover); background: var(--surface); }
+
+/* ── Hero détail ── */
+.detail-hero {
+    position: relative; min-height: 220px; overflow: hidden;
+    border: 1px solid var(--border); margin-bottom: 32px;
+}
+
+.detail-hero-img { position: absolute; inset: 0; }
+.detail-hero-img img { width: 100%; height: 100%; object-fit: cover; opacity: 0.2; display: block; }
+.detail-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, rgba(17,18,20,0.95) 40%, rgba(17,18,20,0.4));
+}
+
+.detail-hero-content { position: relative; z-index: 1; padding: 32px 36px; }
+
+.detail-type {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px; letter-spacing: 4px; color: var(--accent); margin-bottom: 8px;
+}
+
+.detail-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 48px; font-weight: 700; letter-spacing: 2px;
+    color: var(--white); line-height: 1; margin-bottom: 24px;
+}
+
+.detail-stats { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+
+.dstat { text-align: center; }
+.dstat-val { font-family: 'Barlow Condensed', sans-serif; font-size: 26px; font-weight: 600; color: var(--gold); line-height: 1; }
+.dstat-lbl { font-family: 'Barlow Condensed', sans-serif; font-size: 9px; letter-spacing: 3px; color: var(--text-muted); margin-top: 3px; }
+.dstat-sep { width: 1px; height: 28px; background: var(--border); }
+
+/* ── Sections ── */
+.detail-section {
+    margin-bottom: 36px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.detail-section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 4px;
+    color: var(--text-muted); padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+}
+
+.dsec-rune { color: var(--gold); font-size: 14px; }
+
+.detail-empty {
+    padding: 32px 24px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; letter-spacing: 3px; color: var(--text-muted);
+    display: flex; align-items: center; gap: 10px;
+}
+
+/* ── Synopsis ── */
+.detail-synopsis {
+    padding: 24px;
+    font-size: 15px; font-weight: 300; font-style: italic;
+    color: var(--text); line-height: 1.8;
+}
+
+/* ── Tutos ── */
+.tutos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1px; background: var(--border);
+}
+
+.tuto-card {
+    background: var(--surface); text-decoration: none; display: block;
+    transition: background 0.2s;
+}
+
+.tuto-card:hover { background: var(--surface-2); }
+
+.tuto-thumb {
+    width: 100%; height: 140px; position: relative; overflow: hidden;
+    background: var(--surface-2);
+}
+
+.tuto-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.8; transition: opacity 0.3s, transform 0.3s; }
+.tuto-card:hover .tuto-thumb img { opacity: 1; transform: scale(1.05); }
+
+.tuto-thumb-placeholder {
+    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+    font-size: 32px; color: var(--border);
+}
+
+.tuto-play {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 44px; height: 44px; background: rgba(192,57,43,0.85);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--white); transition: background 0.2s, transform 0.2s;
+}
+
+.tuto-card:hover .tuto-play { background: var(--accent); transform: translate(-50%, -50%) scale(1.1); }
+
+.tuto-body { padding: 14px 16px; }
+.tuto-title { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 1px; color: var(--white); margin-bottom: 4px; }
+.tuto-url { font-family: 'Barlow Condensed', sans-serif; font-size: 10px; letter-spacing: 2px; color: var(--text-muted); }
+
+/* ── Débrief succès ── */
+.detail-progress-wrap { padding: 16px 24px; border-bottom: 1px solid var(--border); }
+
+.detail-progress-info {
+    display: flex; justify-content: space-between;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 8px;
+}
+
+.detail-pct { color: var(--gold); }
+
+.detail-progress-bar { height: 3px; background: var(--border); overflow: hidden; }
+.detail-progress-fill { height: 100%; background: var(--gold); transition: width 0.8s ease; }
+
+.succes-debrief { display: flex; flex-direction: column; gap: 1px; background: var(--border); }
+
+.succes-row {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 20px; background: var(--surface); transition: background 0.15s;
+}
+
+.succes-row:hover { background: var(--surface-2); }
+.succes-row--on { background: rgba(192,57,43,0.04); }
+.succes-row--on:hover { background: rgba(192,57,43,0.08); }
+
+.succes-icon { font-size: 18px; flex-shrink: 0; color: var(--border); transition: color 0.2s; }
+.succes-row--on .succes-icon { color: var(--accent); text-shadow: 0 0 8px rgba(192,57,43,0.4); }
+
+.succes-body { flex: 1; }
+.succes-name { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 1px; color: var(--text-muted); transition: color 0.2s; }
+.succes-row--on .succes-name { color: var(--white); }
+.succes-desc { font-size: 12px; font-weight: 300; color: var(--text-muted); margin-top: 3px; }
+
+.btn-toggle {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px; font-weight: 600; letter-spacing: 2px;
+    padding: 7px 14px; background: transparent;
+    color: var(--text-muted); border: 1px solid var(--border);
+    cursor: pointer; white-space: nowrap; transition: all 0.2s;
+}
+
+.btn-toggle:hover { color: var(--gold); border-color: rgba(201,168,76,0.4); background: var(--gold-dim); }
+.btn-toggle--on { color: var(--accent); border-color: rgba(192,57,43,0.35); background: var(--accent-dim); }
+.btn-toggle--on:hover { color: var(--text-muted); border-color: var(--border); background: transparent; }
+
+/* ── Niveaux (liste dans détail) ── */
+.niveaux-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+}
+
+.niveau-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 18px 24px;
+    background: var(--surface);
+    transition: background 0.15s;
+}
+
+.niveau-card:hover {
+    background: var(--surface-2);
+}
+
+.niveau-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.niveau-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--white);
+}
+
+.niveau-difficulty {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    padding: 4px 12px;
+    border: 1px solid rgba(201,168,76,0.35);
+    background: var(--gold-dim);
+    color: var(--gold);
+}
+
+.niveau-desc {
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text-muted);
+}
+
+/* ── Astuces (liste dans détail) ── */
+.astuces-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+}
+
+.astuce-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border-left: 3px solid var(--gold);
+    transition: border-color 0.2s, background 0.15s;
+}
+
+.astuce-card:hover {
+    background: var(--surface-2);
+    border-left-color: var(--border-hover);
+}
+
+.astuce-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--white);
+}
+
+.astuce-content {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.6;
+}

@@ -24,8 +24,8 @@
         <a href="/admin" class="nav-item active">
             <span class="nav-icon">⬡</span> Vue d'ensemble
         </a>
-        <a href="#users" class="nav-item">
-            <span class="nav-icon">⬡</span> Tarnished
+        <a href="/admin/jeux" class="nav-item">
+            <span class="nav-icon">⬡</span> Gestion des Jeux
         </a>
 
         <div class="nav-section-label" style="margin-top: 28px;">SESSION</div>
@@ -111,9 +111,9 @@
                     </td>
                     <td class="td-email"><?= htmlspecialchars($u['email']) ?></td>
                     <td>
-                            <span class="role-badge role-<?= $u['role'] ?>">
-                                <?= strtoupper($u['role']) ?>
-                            </span>
+                        <span class="role-badge role-<?= $u['role'] ?>">
+                            <?= strtoupper($u['role']) ?>
+                        </span>
                     </td>
                     <td class="td-muted"><?= htmlspecialchars($u['avatar']) ?></td>
                     <td class="td-muted"><?= date('d/m/Y', strtotime($u['created_at'])) ?></td>

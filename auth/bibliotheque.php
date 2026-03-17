@@ -152,5 +152,7 @@ $astuces = $stmt->fetchAll();
 $nb_total     = count($succes);
 $nb_debloques = count(array_filter($succes, fn($s) => in_array($s['id'], $succes_debloques)));
 $pct          = $nb_total > 0 ? round($nb_debloques / $nb_total * 100) : 0;
-
+$total_jeux   = 1;
+$total_temps  = $user_jeu['temps_jeu'] ?? 0;
+$total_succes = $nb_debloques;
 require_once __DIR__ . '/../front/bibliotheque.html';

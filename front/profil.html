@@ -90,17 +90,6 @@
             <div class="divider"></div>
 
             <p class="section-label">Apparence</p>
-            <div class="theme-toggle">
-                <label class="theme-option <?= ($user['theme'] ?? 'dark') === 'dark' ? 'selected' : '' ?>">
-                    <input type="radio" name="theme" value="dark" <?= ($user['theme'] ?? 'dark') === 'dark' ? 'checked' : '' ?>>
-                    <span>🌑 Mode sombre</span>
-                </label>
-                <label class="theme-option <?= ($user['theme'] ?? 'dark') === 'light' ? 'selected' : '' ?>">
-                    <input type="radio" name="theme" value="light" <?= ($user['theme'] ?? 'dark') === 'light' ? 'checked' : '' ?>>
-                    <span>☀️ Mode clair</span>
-                </label>
-            </div>
-
             <div class="divider"></div>
 
             <p class="section-label">Changer le mot de passe <span>(laisser vide pour ne pas modifier)</span></p>
