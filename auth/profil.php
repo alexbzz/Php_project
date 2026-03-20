@@ -169,6 +169,7 @@ $stmt = $pdo->prepare("SELECT succes_id FROM user_succes WHERE user_id=?");
 $stmt->execute([$user_id]);
 $succes_debloques = array_column($stmt->fetchAll(), 'succes_id');
 
+// Récupérer les succès pour chaque jeu de la bibliothèque
 $succes_par_jeu = [];
 foreach ($ma_bibliotheque as $bib) {
     $stmt = $pdo->prepare("SELECT * FROM succes WHERE jeu_id=?");

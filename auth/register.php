@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         try {
+            // Prepared statement = protection contre les injections SQL
             $stmt = $pdo->prepare("SELECT id FROM utilisateurs WHERE email = ?");
             $stmt->execute([$email]);
             if ($stmt->fetch()) {
