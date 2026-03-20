@@ -5,6 +5,28 @@ session_start();
 $errors = [];
 $success = false;
 
+function validatePassword($password) {
+    $errors = [];
+
+    if (strlen($password) < 8) {
+        $errors[] = "Le mot de passe doit contenir au moins 8 caractères.";
+    }
+
+    if (!preg_match('/[A-Z]/', $password)) {
+        $errors[] = "Le mot de passe doit contenir au moins une majuscule.";
+    }
+
+    if (!preg_match('/[0-9]/', $password)) {
+        $errors[] = "Le mot de passe doit contenir au moins un chiffre.";
+    }
+
+    if (!preg_match('/[!@#$%^&*()_+\-=\[\]{};:\'",.<>?\/\\|`~]/', $password)) {
+        $errors[] = "Le mot de passe doit contenir au moins un symbole spécial (!@#$%^&*...).";
+    }
+
+    return $errors;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = trim($_POST['nom'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -13,7 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($nom)) $errors[] = "Le nom est requis.";
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Email invalide.";
-    if (strlen($password) < 8) $errors[] = "Le mot de passe doit contenir au moins 8 caractères.";
+
+    // Valider la force du mot de passe
+    $passwordErrors = validatePassword($password);
+    $errors = array_merge($errors, $passwordErrors);
+
     if ($password !== $confirm) $errors[] = "Les mots de passe ne correspondent pas.";
 
     if (empty($errors)) {

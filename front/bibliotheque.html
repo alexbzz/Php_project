@@ -15,12 +15,12 @@
         <span class="nav-name">THE LANDS BETWEEN</span>
     </div>
     <div class="nav-links">
-        <a href="/" class="nav-link">ACCUEIL</a>
-        <a href="/bibliotheque" class="nav-link">MA BIBLIOTHÈQUE</a>
+        <a href="/" class="nav-link">Accueil</a>
+        <a href="/bibliotheque" class="nav-link">Ma Bibliothèque</a>
         <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
-        <a href="/admin" class="nav-link gold">ELDEN LORD</a>
+        <a href="/admin" class="nav-link gold">Admin</a>
         <?php endif; ?>
-        <a href="/logout" class="nav-link muted">QUITTER</a>
+        <a href="/logout" class="nav-link muted">Déconnexion</a>
     </div>
 </nav>
 
@@ -28,14 +28,14 @@
 
     <!-- Message de confirmation -->
     <?php if ($flash === 'succes'): ?>
-    <div class="flash flash-ok">Succès débloqué !</div>
+    <div class="flash flash-ok">Succès validé !</div>
     <?php elseif ($flash === 'retire'): ?>
-    <div class="flash flash-neutral">Succès retiré.</div>
+    <div class="flash flash-neutral">Succès supprimé.</div>
     <?php endif; ?>
 
     <!-- Bouton pour revenir à la liste -->
     <div style="margin-bottom: 24px;">
-        <a href="/bibliotheque" class="btn-back">← RETOUR À MA BIBLIOTHÈQUE</a>
+        <a href="/bibliotheque" class="btn-back">← Retour</a>
     </div>
 
     <!-- Banneau principal du jeu -->
@@ -52,17 +52,17 @@
             <div class="detail-stats">
                 <div class="dstat">
                     <div class="dstat-val"><?= $user_jeu['temps_jeu'] ?>h</div>
-                    <div class="dstat-lbl">TEMPS DE JEU</div>
+                    <div class="dstat-lbl">Temps de jeu</div>
                 </div>
                 <div class="dstat-sep"></div>
                 <div class="dstat">
                     <div class="dstat-val"><?= $nb_debloques ?>/<?= $nb_total ?></div>
-                    <div class="dstat-lbl">SUCCÈS</div>
+                    <div class="dstat-lbl">Succès</div>
                 </div>
                 <div class="dstat-sep"></div>
                 <div class="dstat">
                     <div class="dstat-val"><?= $pct ?>%</div>
-                    <div class="dstat-lbl">COMPLÉTION</div>
+                    <div class="dstat-lbl">Complétion</div>
                 </div>
             </div></div>
     </div>
@@ -70,8 +70,8 @@
     <!-- Description du jeu -->
     <div class="detail-section">
         <div class="detail-section-title">
-            <span class="dsec-rune">ᚦ</span>
-            SYNOPSIS
+            <span class="dsec-rune">●</span>
+            Description
         </div>
         <div class="detail-synopsis">
             <?= htmlspecialchars($jeu['description']) ?>
@@ -82,11 +82,11 @@
     <div class="detail-section">
         <div class="detail-section-title">
             <span class="dsec-rune">▶</span>
-            TUTORIELS
+            Tutoriels
         </div>
         <?php if (empty($tutos)): ?>
         <div class="detail-empty">
-            <span>◈</span> Aucun tutoriel disponible pour ce jeu.
+            <span>-</span> Aucun tutoriel pour ce jeu.
         </div>
         <?php else: ?>
         <div class="tutos-grid">
@@ -189,12 +189,12 @@
     <div class="detail-section">
         <div class="detail-section-title">
             <span class="dsec-rune">💡</span>
-            ASTUCES
+            Astuces
         </div>
 
         <?php if (empty($astuces)): ?>
         <div class="detail-empty">
-            <span>◈</span> Aucune astuce disponible pour ce jeu.
+            <span>-</span> Aucune astuce pour ce jeu.
         </div>
         <?php else: ?>
         <div class="astuces-list">

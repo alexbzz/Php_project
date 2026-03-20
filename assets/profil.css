@@ -303,6 +303,46 @@ input::placeholder {
     font-weight: 300;
 }
 
+.password-requirements {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 14px;
+    margin-top: 10px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.password-requirements p {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+}
+
+.password-requirements p:last-child {
+    margin-bottom: 0;
+}
+
+.req-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    margin-right: 10px;
+    border: 1px solid var(--border-hover);
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.req-item.met {
+    background: rgba(192,57,43,0.2);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
 /* ── Avatar grid ── */
 .avatar-grid {
     display: grid;

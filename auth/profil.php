@@ -20,6 +20,28 @@ $avatars = [
 
 $user_id = (int)$_SESSION['user_id'];
 
+function validatePassword($password) {
+    $errors = [];
+
+    if (strlen($password) < 8) {
+        $errors[] = "Le mot de passe doit contenir au moins 8 caractères.";
+    }
+
+    if (!preg_match('/[A-Z]/', $password)) {
+        $errors[] = "Le mot de passe doit contenir au moins une majuscule.";
+    }
+
+    if (!preg_match('/[0-9]/', $password)) {
+        $errors[] = "Le mot de passe doit contenir au moins un chiffre.";
+    }
+
+    if (!preg_match('/[!@#$%^&*()_+\-=\[\]{};:\'",.<>?\/\\|`~]/', $password)) {
+        $errors[] = "Le mot de passe doit contenir au moins un symbole spécial (!@#$%^&*...).";
+    }
+
+    return $errors;
+}
+
 $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
@@ -45,8 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profil'])) {
     if (!in_array($theme, ['dark', 'light'])) $errors[] = "Thème invalide.";
 
     if (!empty($password)) {
-        if (strlen($password) < 6)      $errors[] = "Le mot de passe doit faire au moins 6 caractères.";
-        if ($password !== $confirm)     $errors[] = "Les mots de passe ne correspondent pas.";
+        $passwordErrors = validatePassword($password);
+        $errors = array_merge($errors, $passwordErrors);
+        if ($password !== $confirm) $errors[] = "Les mots de passe ne correspondent pas.";
     }
 
     if (empty($errors)) {

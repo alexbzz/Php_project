@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil — The Lands Between</title>
+    <title>Profil</title>
     <link rel="stylesheet" href="/assets/profil.css">
 </head>
 <body>
@@ -13,8 +13,8 @@
     <div class="header">
         <p class="title">The Lands Between</p>
         <div class="rune-divider"><span class="rune-symbol">✦</span></div>
-        <h1 class="subtitle">Fiche du Voyageur</h1>
-        <p class="subtitle-small">Membre depuis le <?= date('d/m/Y', strtotime($user['created_at'])) ?></p>
+        <h1 class="subtitle">Mon profil</h1>
+        <p class="subtitle-small">Inscrit depuis le <?= date('d/m/Y', strtotime($user['created_at'])) ?></p>
     </div>
 
     <?php if ($success): ?>
@@ -24,7 +24,7 @@
     <?php if (!empty($errors)): ?>
     <div class="errors">
         <?php foreach ($errors as $e): ?>
-        <p>✗ <?= htmlspecialchars($e) ?></p>
+        <p>⚠ <?= htmlspecialchars($e) ?></p>
         <?php endforeach; ?>
     </div>
     <?php endif; ?>
@@ -95,7 +95,13 @@
             <p class="section-label">Changer le mot de passe <span>(laisser vide pour ne pas modifier)</span></p>
             <div class="form-group">
                 <label for="password">Nouveau mot de passe</label>
-                <input type="password" id="password" name="password" placeholder="Minimum 6 caractères...">
+                <input type="password" id="password" name="password" placeholder="Minimum 8 caractères..." oninput="validatePasswordStrength()">
+                <div class="password-requirements">
+                    <p><span class="req-item" id="req-length">○</span> Au moins 8 caractères</p>
+                    <p><span class="req-item" id="req-uppercase">○</span> Une majuscule (A-Z)</p>
+                    <p><span class="req-item" id="req-number">○</span> Un chiffre (0-9)</p>
+                    <p><span class="req-item" id="req-symbol">○</span> Un symbole (!@#$%^&*...)</p>
+                </div>
             </div>
             <div class="form-group">
                 <label for="confirm">Confirmer</label>
@@ -124,6 +130,44 @@
             document.querySelector('.profile-avatar img').src = this.closest('.avatar-option').querySelector('img').src;
         });
     });
+
+    function validatePasswordStrength() {
+        const password = document.getElementById('password').value;
+
+        if (password === '') {
+            // Réinitialiser les critères si le champ est vide
+            document.getElementById('req-length').textContent = '○';
+            document.getElementById('req-length').className = 'req-item';
+            document.getElementById('req-uppercase').textContent = '○';
+            document.getElementById('req-uppercase').className = 'req-item';
+            document.getElementById('req-number').textContent = '○';
+            document.getElementById('req-number').className = 'req-item';
+            document.getElementById('req-symbol').textContent = '○';
+            document.getElementById('req-symbol').className = 'req-item';
+            return;
+        }
+
+        const hasLength = password.length >= 8;
+        const hasUppercase = /[A-Z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};:\'",.<>?\/\\|`~]/.test(password);
+
+        updateRequirement('req-length', hasLength);
+        updateRequirement('req-uppercase', hasUppercase);
+        updateRequirement('req-number', hasNumber);
+        updateRequirement('req-symbol', hasSymbol);
+    }
+
+    function updateRequirement(elementId, isMet) {
+        const element = document.getElementById(elementId);
+        if (isMet) {
+            element.textContent = '✓';
+            element.className = 'req-item met';
+        } else {
+            element.textContent = '○';
+            element.className = 'req-item';
+        }
+    }
 </script>
 
 </body>
