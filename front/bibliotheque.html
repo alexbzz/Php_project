@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($jeu['nom']) ?> — Détail</title>
+    <link rel="stylesheet" href="/assets/bibliotheque.css">
+</head>
+<body>
+<div class="noise"></div>
+
+<nav class="nav">
+    <div class="nav-brand">
+        <span class="nav-rune">ᚱ</span>
+        <span class="nav-name">THE LANDS BETWEEN</span>
+    </div>
+    <div class="nav-links">
+        <a href="/" class="nav-link">Accueil</a>
+        <a href="/bibliotheque" class="nav-link">Ma Bibliothèque</a>
+        <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+        <a href="/admin" class="nav-link gold">Admin</a>
+        <?php endif; ?>
+        <a href="/logout" class="nav-link muted">Déconnexion</a>
+    </div>
+</nav>
+
+<div class="page-wrap">
+
+    <!-- Message de confirmation -->
+    <?php if ($flash === 'succes'): ?>
+    <div class="flash flash-ok">Succès validé !</div>
+    <?php elseif ($flash === 'retire'): ?>
+    <div class="flash flash-neutral">Succès supprimé.</div>
+    <?php endif; ?>
+
+    <!-- Bouton pour revenir à la liste -->
+    <div style="margin-bottom: 24px;">
+        <a href="/bibliotheque" class="btn-back">← Retour</a>
+    </div>
+
+    <!-- Banneau principal du jeu -->
+    <div class="detail-hero">
+        <?php if (!empty($jeu['image'])): ?>
+        <div class="detail-hero-img">
+            <img src="/assets/<?= htmlspecialchars($jeu['image']) ?>" alt="<?= htmlspecialchars($jeu['nom']) ?>">
+            <div class="detail-hero-overlay"></div>
+        </div>
+        <?php endif; ?>
+        <div class="detail-hero-content">
+            <div class="detail-type"><?= htmlspecialchars($jeu['type']) ?></div>
+            <h1 class="detail-title"><?= htmlspecialchars($jeu['nom']) ?></h1>
+            <div class="detail-stats">
+                <div class="dstat">
+                    <div class="dstat-val"><?= $user_jeu['temps_jeu'] ?>h</div>
+                    <div class="dstat-lbl">Temps de jeu</div>
+                </div>
+                <div class="dstat-sep"></div>
+                <div class="dstat">
+                    <div class="dstat-val"><?= $nb_debloques ?>/<?= $nb_total ?></div>
+                    <div class="dstat-lbl">Succès</div>
+                </div>
+                <div class="dstat-sep"></div>
+                <div class="dstat">
+                    <div class="dstat-val"><?= $pct ?>%</div>
+                    <div class="dstat-lbl">Complétion</div>
+                </div>
+            </div></div>
+    </div>
+
+    <!-- Description du jeu -->
+    <div class="detail-section">
+        <div class="detail-section-title">
+            <span class="dsec-rune">●</span>
+            Description
+        </div>
+        <div class="detail-synopsis">
+            <?= htmlspecialchars($jeu['description']) ?>
+        </div>
+    </div>
+
+    <!-- Tutoriels YouTube -->
+    <div class="detail-section">
+        <div class="detail-section-title">
+            <span class="dsec-rune">▶</span>
+            Tutoriels
+        </div>
+        <?php if (empty($tutos)): ?>
+        <div class="detail-empty">
+            <span>-</span> Aucun tutoriel pour ce jeu.
+        </div>
+        <?php else: ?>
+        <div class="tutos-grid">
+            <?php foreach ($tutos as $t):
+                preg_match('/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $t['url'], $matches);
+                $yt_id = $matches[1] ?? null;
+            ?>
+            <a href="<?= htmlspecialchars($t['url']) ?>" target="_blank" rel="noopener" class="tuto-card">
+                <div class="tuto-thumb">
+                    <?php if ($yt_id): ?>
+                    <img src="https://img.youtube.com/vi/<?= $yt_id ?>/hqdefault.jpg" alt="<?= htmlspecialchars($t['contenue']) ?>">
+                    <?php else: ?>
+                    <div class="tuto-thumb-placeholder">▶</div>
+                    <?php endif; ?>
+                    <div class="tuto-play">▶</div>
+                </div>
+                <div class="tuto-body">
+                    <div class="tuto-title"><?= htmlspecialchars($t['contenue']) ?></div>
+                    <div class="tuto-url">youtube.com</div>
+                </div>
+            </a>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- Résumé des succès obtenus -->
+    <div class="detail-section">
+        <div class="detail-section-title">
+            <span class="dsec-rune">♛</span>
+            DÉBRIEF DES SUCCÈS
+        </div>
+
+        <!-- Barre progression -->
+        <div class="detail-progress-wrap">
+            <div class="detail-progress-info">
+                <span><?= $nb_debloques ?> / <?= $nb_total ?> succès débloqués</span>
+                <span class="detail-pct"><?= $pct ?>%</span>
+            </div>
+            <div class="detail-progress-bar">
+                <div class="detail-progress-fill" style="width:<?= $pct ?>%"></div>
+            </div>
+        </div>
+
+        <?php if (empty($succes)): ?>
+        <div class="detail-empty">
+            <span>◈</span> Aucun succès enregistré pour ce jeu.
+        </div>
+        <?php else: ?>
+        <div class="succes-debrief">
+            <?php foreach ($succes as $s):
+                $unlocked = in_array($s['id'], $succes_debloques);
+            ?>
+            <div class="succes-row <?= $unlocked ? 'succes-row--on' : '' ?>">
+                <div class="succes-icon"><?= $unlocked ? '♛' : '◈' ?></div>
+                <div class="succes-body">
+                    <div class="succes-name"><?= htmlspecialchars($s['nom']) ?></div>
+                    <div class="succes-desc"><?= htmlspecialchars($s['description']) ?></div>
+                </div>
+                <form method="POST">
+                    <input type="hidden" name="<?= $unlocked ? 'lock_succes' : 'unlock_succes' ?>" value="1">
+                    <input type="hidden" name="succes_id" value="<?= $s['id'] ?>">
+                    <button class="btn-toggle <?= $unlocked ? 'btn-toggle--on' : '' ?>">
+                        <?= $unlocked ? '✕ RETIRER' : '✔ DÉBLOQUER' ?>
+                    </button>
+                </form>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- Liste des niveaux du jeu -->
+    <div class="detail-section">
+        <div class="detail-section-title">
+            <span class="dsec-rune">⚔</span>
+            NIVEAUX
+        </div>
+
+        <?php if (empty($niveaux)): ?>
+        <div class="detail-empty">
+            <span>◈</span> Aucun niveau disponible pour ce jeu.
+        </div>
+        <?php else: ?>
+        <div class="niveaux-list">
+            <?php foreach ($niveaux as $n): ?>
+            <div class="niveau-card">
+                <div class="niveau-header">
+                    <div class="niveau-name"><?= htmlspecialchars($n['nom']) ?></div>
+                    <div class="niveau-difficulty"><?= htmlspecialchars($n['difficulte']) ?></div>
+                </div>
+                <div class="niveau-desc"><?= htmlspecialchars($n['description']) ?></div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+
+    <!-- Liste des astuces pour le jeu -->
+    <div class="detail-section">
+        <div class="detail-section-title">
+            <span class="dsec-rune">💡</span>
+            Astuces
+        </div>
+
+        <?php if (empty($astuces)): ?>
+        <div class="detail-empty">
+            <span>-</span> Aucune astuce pour ce jeu.
+        </div>
+        <?php else: ?>
+        <div class="astuces-list">
+            <?php foreach ($astuces as $a): ?>
+            <div class="astuce-card">
+                <div class="astuce-title"><?= htmlspecialchars($a['contenu']) ?></div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+    </div>
+
+</div>
+
+</body>
+</html>

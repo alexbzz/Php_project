@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="<?= htmlspecialchars($user['theme'] ?? 'dark') ?>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil</title>
+    <link rel="stylesheet" href="/assets/profil.css">
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <p class="title">The Lands Between</p>
+        <div class="rune-divider"><span class="rune-symbol">✦</span></div>
+        <h1 class="subtitle">Mon profil</h1>
+        <p class="subtitle-small">Inscrit depuis le <?= date('d/m/Y', strtotime($user['created_at'])) ?></p>
+    </div>
+
+    <?php if ($success): ?>
+    <div class="success-msg"><p>✓ Profil mis à jour avec succès</p></div>
+    <?php endif; ?>
+
+    <?php if (!empty($errors)): ?>
+    <div class="errors">
+        <?php foreach ($errors as $e): ?>
+        <p>⚠ <?= htmlspecialchars($e) ?></p>
+        <?php endforeach; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php
+    $currentAvatar = $user['avatar'] ?? 'avatar1';
+    if (!isset($avatars[$currentAvatar])) $currentAvatar = 'avatar1';
+    ?>
+
+    <div class="profile-info">
+        <div class="profile-avatar">
+            <img src="<?= $avatars[$currentAvatar]['img'] ?>" alt="avatar">
+        </div>
+        <div class="profile-details">
+            <div class="info-badge"><?= strtoupper(htmlspecialchars($user['role'])) ?></div>
+            <div class="info-name"><?= htmlspecialchars($user['nom']) ?></div>
+            <div class="info-email"><?= htmlspecialchars($user['email']) ?></div>
+            <?php if (!empty($user['bio'])): ?>
+            <div class="info-bio"><?= htmlspecialchars($user['bio']) ?></div>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="footer-link">
+        <a href="/">← ACCUEIL</a>
+        &nbsp;&nbsp;·&nbsp;&nbsp;
+        <a href="/bibliotheque">→ Ma bibliothèque</a>
+        &nbsp;&nbsp;·&nbsp;&nbsp;
+        <a href="/logout">→ Se déconnecter</a>
+    </div>
+
+    <div class="card">
+
+        <form method="POST" action="/profil">
+            <input type="hidden" name="save_profil" value="1">
+
+            <p class="section-label">Choisir un avatar</p>
+            <div class="avatar-grid">
+                <?php foreach ($avatars as $key => $av): ?>
+                <label class="avatar-option <?= $currentAvatar === $key ? 'selected' : '' ?>">
+                    <input type="radio" name="avatar" value="<?= $key ?>" <?= $currentAvatar === $key ? 'checked' : '' ?>>
+                    <img src="<?= $av['img'] ?>" alt="<?= $av['label'] ?>">
+                    <span class="avatar-label"><?= $av['label'] ?></span>
+                </label>
+                <?php endforeach; ?>
+            </div>
+
+            <div class="divider"></div>
+
+            <p class="section-label">Informations</p>
+            <div class="form-group">
+                <label for="nom">Nom</label>
+                <input type="text" id="nom" name="nom" value="<?= htmlspecialchars($user['nom']) ?>">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="<?= htmlspecialchars($user['email']) ?>">
+            </div>
+            <div class="form-group">
+                <label for="bio">Biographie <span class="optional">(optionnel)</span></label>
+                <input type="text" id="bio" name="bio" placeholder="Quelques mots sur vous..." value="<?= htmlspecialchars($user['bio'] ?? '') ?>">
+            </div>
+
+            <div class="divider"></div>
+
+            <p class="section-label">Apparence</p>
+            <div class="divider"></div>
+
+            <p class="section-label">Changer le mot de passe <span>(laisser vide pour ne pas modifier)</span></p>
+            <div class="form-group">
+                <label for="password">Nouveau mot de passe</label>
+                <input type="password" id="password" name="password" placeholder="Minimum 8 caractères..." oninput="validatePasswordStrength()">
+                <div class="password-requirements">
+                    <p><span class="req-item" id="req-length">○</span> Au moins 8 caractères</p>
+                    <p><span class="req-item" id="req-uppercase">○</span> Une majuscule (A-Z)</p>
+                    <p><span class="req-item" id="req-number">○</span> Un chiffre (0-9)</p>
+                    <p><span class="req-item" id="req-symbol">○</span> Un symbole (!@#$%^&*...)</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirm">Confirmer</label>
+                <input type="password" id="confirm" name="confirm" placeholder="Répétez le mot de passe...">
+            </div>
+
+            <button type="submit" class="btn">Sauvegarder</button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    document.querySelectorAll('input[name="theme"]').forEach(input => {
+        input.addEventListener('change', function() {
+            document.documentElement.setAttribute('data-theme', this.value);
+            document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('selected'));
+            this.closest('.theme-option').classList.add('selected');
+        });
+    });
+
+    document.querySelectorAll('input[name="avatar"]').forEach(input => {
+        input.addEventListener('change', function() {
+            document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
+            this.closest('.avatar-option').classList.add('selected');
+            document.querySelector('.profile-avatar img').src = this.closest('.avatar-option').querySelector('img').src;
+        });
+    });
+
+    function validatePasswordStrength() {
+        const password = document.getElementById('password').value;
+
+        if (password === '') {
+            // Réinitialiser les critères si le champ est vide
+            document.getElementById('req-length').textContent = '○';
+            document.getElementById('req-length').className = 'req-item';
+            document.getElementById('req-uppercase').textContent = '○';
+            document.getElementById('req-uppercase').className = 'req-item';
+            document.getElementById('req-number').textContent = '○';
+            document.getElementById('req-number').className = 'req-item';
+            document.getElementById('req-symbol').textContent = '○';
+            document.getElementById('req-symbol').className = 'req-item';
+            return;
+        }
+
+        const hasLength = password.length >= 8;
+        const hasUppercase = /[A-Z]/.test(password);
+        const hasNumber = /[0-9]/.test(password);
+        const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};:\'",.<>?\/\\|`~]/.test(password);
+
+        updateRequirement('req-length', hasLength);
+        updateRequirement('req-uppercase', hasUppercase);
+        updateRequirement('req-number', hasNumber);
+        updateRequirement('req-symbol', hasSymbol);
+    }
+
+    function updateRequirement(elementId, isMet) {
+        const element = document.getElementById(elementId);
+        if (isMet) {
+            element.textContent = '✓';
+            element.className = 'req-item met';
+        } else {
+            element.textContent = '○';
+            element.className = 'req-item';
+        }
+    }
+</script>
+
+</body>
+</html>
