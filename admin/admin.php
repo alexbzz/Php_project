@@ -1,4 +1,9 @@
 <?php
+/* 
+    L'administrateur peut voir la liste des utilisateurs, 
+    supprimer des comptes (sauf les autres admins) 
+    et changer les rôles (admin/user).
+ */
 require_once __DIR__ . '/../config.php';
 session_start();
 
