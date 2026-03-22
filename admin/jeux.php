@@ -1,4 +1,13 @@
 <?php
+/* 
+    Le module "Jeux" permet à l'administrateur de gérer les jeux référencés sur le site.
+    Il peut :
+    - Ajouter, modifier ou supprimer un jeu (nom, type, description, image).
+    - Gérer les niveaux associés à chaque jeu (nom, difficulté, description).
+    - Gérer les succès liés à chaque jeu (nom, description).
+    - Ajouter des tutos YouTube pour chaque jeu (titre, URL).
+    - Ajouter des astuces pour chaque jeu (contenu textuel).
+ */
 require_once __DIR__ . '/../config.php';
 session_start();
 
