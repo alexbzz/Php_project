@@ -11,6 +11,7 @@ if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'admin') {
     header('Location: /login');
     exit;
 }
+// Connexion à la base de données
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['delete_user'])) {
@@ -27,6 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Location: /admin');
     exit;
 }
+
+// Récupérer tous les utilisateurs
 
 $stmt = $pdo->query("SELECT * FROM utilisateurs ORDER BY created_at DESC");
 $users = $stmt->fetchAll();
