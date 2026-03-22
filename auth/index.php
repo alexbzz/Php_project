@@ -1,4 +1,9 @@
 <?php
+/* 
+    Page d'accueil du site, accessible à tous.
+    Affiche une liste de jeux disponibles, avec un aperçu de leur description et des statistiques globales (nombre de joueurs, nombre de jeux, etc.).
+    Les utilisateurs connectés peuvent voir quels jeux ils ont déjà ajoutés à leur bibliothèque et accéder rapidement à leur profil ou à leur bibliothèque.
+ */
 require_once __DIR__ . '/../config.php';
 session_start();
 
