@@ -1,4 +1,10 @@
 <?php
+/* 
+    Page de connexion pour les utilisateurs.
+    Permet aux utilisateurs de se connecter avec leur email et mot de passe.
+    Affiche des messages d'erreur en cas de données invalides ou de problèmes de connexion.
+    Redirige les utilisateurs vers leur profil ou la page d'administration après une connexion réussie.
+ */
 require_once __DIR__ . '/../config.php';
 
 session_start();
