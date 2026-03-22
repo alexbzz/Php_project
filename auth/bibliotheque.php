@@ -1,4 +1,15 @@
 <?php
+/* 
+    Le module "Bibliothèque" permet à chaque utilisateur de gérer sa collection de jeux.
+    Il peut :
+    - Voir la liste de ses jeux avec le temps de jeu et les succès débloqués.
+    - Ajouter un jeu à sa bibliothèque (en choisissant parmi les jeux référencés).
+    - Retirer un jeu de sa bibliothèque.
+    - Mettre à jour le temps de jeu pour chaque jeu.
+    - Noter chaque jeu (1 à 5 étoiles).
+    - Voir les détails d'un jeu (description, niveaux, succès, tutos, astuces).
+    - Débloquer ou retirer des succès manuellement (pour simuler les progrès).
+ */ 
 require_once __DIR__ . '/../config.php';
 session_start();
 
