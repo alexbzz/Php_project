@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // ✅ update_note bien dans le bloc POST
+    //  update_note bien dans le bloc POST
     if (isset($_POST['update_note'])) {
         $note = (int)$_POST['note'];
         if ($note >= 1 && $note <= 5) {
