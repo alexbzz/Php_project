@@ -1,4 +1,11 @@
 <?php
+/* 
+    Page de profil utilisateur, accessible uniquement aux utilisateurs connectés.
+    Affiche les informations du profil (nom, email, avatar, thème, bio) et permet de les modifier.
+    Affiche la bibliothèque de jeux de l'utilisateur avec les succès débloqués et le temps de jeu pour chaque jeu.
+    Permet d'ajouter ou de retirer des jeux de la bibliothèque, ainsi que de débloquer ou retirer des succès.
+ */
+
 require_once __DIR__ . '/../config.php';
 session_start();
 
