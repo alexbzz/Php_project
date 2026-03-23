@@ -1,4 +1,11 @@
 <?php
+/* 
+    Page d'inscription pour les nouveaux utilisateurs.
+    Permet aux utilisateurs de créer un compte en fournissant un nom, un email et un mot de passe.
+    Valide les données d'entrée (format de l'email, force du mot de passe, correspondance des mots de passe).
+    Affiche des messages d'erreur en cas de données invalides ou de problèmes lors de l'inscription.
+    Redirige les utilisateurs vers leur profil après une inscription réussie.
+ */
 require_once __DIR__ . '/../config.php';
 session_start();
 
