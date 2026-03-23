@@ -119,8 +119,8 @@ $nb_succes = $pdo->query("SELECT COUNT(*) FROM succes")->fetchColumn();
 
                 <div class="game-card-body">
                     <div class="game-card-top">
-                        <span class="game-type"><?= htmlspecialchars($j['type']) ?></span>
-                        <span class="game-num"><?= str_pad($j['id'], 2, '0', STR_PAD_LEFT) ?></span>
+                        <span class="game-type"><?= htmlspecialchars($j['type']) ?></span> #empeche le xss
+                        <span class="game-num"><?= str_pad($j['id'], 2, '0', STR_PAD_LEFT) ?></span> #formate le numéro du jeu en 2 chiffres (01,02...)
                     </div>
                     <h3 class="game-name"><?= htmlspecialchars($j['nom']) ?></h3>
                     <p class="game-desc"><?= htmlspecialchars(mb_substr($j['description'], 0, 100)) ?>…</p>
