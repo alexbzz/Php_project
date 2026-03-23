@@ -27,6 +27,7 @@ $avatars = [
 
 $user_id = (int)$_SESSION['user_id'];
 
+// Fonction de validation du mot de passe
 function validatePassword($password) {
     $errors = [];
 
@@ -58,6 +59,8 @@ if (!$user) {
     header('Location: /login');
     exit;
 }
+
+// Gérer les différentes actions POST
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profil'])) {
     $nom      = trim($_POST['nom'] ?? '');
@@ -102,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profil'])) {
     }
 }
 
+// Gérer les actions liées à la bibliothèque de jeux et aux succès
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_jeu'])) {
     $jeu_id = (int)$_POST['jeu_id'];
     $temps  = max(0, (int)($_POST['temps_jeu'] ?? 0));
@@ -119,6 +123,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_jeu'])) {
     exit;
 }
 
+// Gérer les autres actions POST (remove_jeu, update_temps, unlock_succes, lock_succes) de manière similaire
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_jeu'])) {
     $pdo->prepare("DELETE FROM user_jeux WHERE id=? AND user_id=?")
